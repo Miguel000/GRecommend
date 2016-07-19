@@ -1,0 +1,117 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{uarial}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\author{Miguel Hernández Boza}
+\title{GRecommender}
+\begin{document}
+	
+		\maketitle
+		\begin{abstract}
+			
+			En la siguiente memoria voy a explicar como he desarrollado mi sistema de recomendaciones de películas, que datos he utilizado y como he ido eligiendo todas las partes de mi solución.\\
+			
+			GRecommender se basa en un sistema de recomendaciones con una base de datos orientada a grafos que da soporte a todo el sistema. El frontal interactúa con la base de datos modificando ésta creando nuevos vértices al insertar un nuevo usuario y aristas en el caso de las recomendaciones. \\
+			
+			En las siguientes paginas se describirá todo el proceso que se ha seguido hasta lograr la solución.\\
+			
+		\end{abstract}
+		\clearpage
+		\tableofcontents
+		\clearpage
+		\listoffigures
+		\clearpage
+		\section{Metodología de trabajo}
+		
+			La metodología usada para esta solución es la CRISPDM.
+			\begin{itemize}
+			\item \textit{Comprensión del negocio}: 			
+			Esta fase inicial se centra en la comprensión de los objetivos y requisitos del proyecto, en este caso el de una solución que de recomendaciones de películas. Para lograr esto recibiremos de diferentes fuentes de información como IDBM o Filmaffinity. El valor que puede tener esta solución sería la de ganar más relevancia con nuestras recomendaciones, ya que podemos ser una página de referencia a la hora de hablar sobre cine a través de unas recomendaciones dinámicas y teniendo en cuenta las acciones de los usuarios.
+			\item \textit{Comprensión de Datos}: 
+			Esta fase comienza con una colección inicial de datos y procesos con actividades con el objetivo de familiarizarse con los datos. Dentro de esta información tendremos la simbiosis de la película, actores que aparecen, director de la película o criticas y nota que se le da a la película. Por otro lado nos aparecerán también comentarios positivo o negativos que nos harán ver una sensación global sobre cada película. Además de esto tendremos diferentes etiquetas sobre cada película que nos pueden servir para buscar películas similares.
+			\item \textit{Preparación de datos}: 
+			La preparación de los datos a sido a partir de un scrapper en Perl donde he descargado toda la siguiente info por película de filmaffinity
+			
+			\subitem Nombre
+			\subitem Año
+			\subitem Genero
+			\subitem Actores
+			\subitem Director
+			\subitem Simbiosis
+			\subitem Calificación
+			\subitem Comentarios
+			
+			También me he descargado una base de datos de comentarios para ver si algunas de ellas coincidían con las películas que ya tenía para tener mayor cantidad de datos posibles.
+			Además estos comentarios me dirás cosas positivas o negativas, extrayendo esta información de los textos a través de NLP (Natural Language Processing)
+			\item \textit{Modelado}: 
+			Para modelar los datos, al ir a utilizar como base de datos una no relacional, del tipo grafo, me he preparado distintos CSV desde los cuales importare toda la información estática. Tendré un esquema desde el que comenzaré a insertar los usuarios que recibirán las primeras recomendaciones basadas en los mayores scores.
+			\item \textit{Evaluación}: 
+			El modelo seguido para la solución es la siguiente. Inicialmente tenemos toda la información de películas insertada en la base de datos, esta tendrá el siguiente esquema.
+			
+			Una vez queramos registrarnos en la aplicación, ésta creara una entidad o nodo con los datos del usuario y basará las primeras recomendaciones en los valores más altos de evaluación de cada genero de película. Esto lo lograremos creando relaciones de esta entidad con los nodos de esas películas. 
+			
+			Una vez el usuario entre, vera esas recomendaciones y podrá decidir cuales le interesa, con ello editaremos esas relaciones borrando las que no le interesen y enseñándole otras con similitudes en diferentes parámetros como pueden ser:
+
+			\subitem Año
+			\subitem Genero
+			\subitem Actores que aparecen
+			\subitem Director
+			
+			Si elige nuevas películas en las que esta interesado se crearán estas nuevas relaciones y se le podrán mostrar más. Siempre se podrá volver a empezar o buscar libremente las películas para después comenzar el método de recomendación.
+			\item \textit{Despliegue}: 
+			El despliegue de la aplicación será a partir de TBD
+			\begin{figure}[tbph!]
+				\centering
+				\includegraphics[width=0.7\linewidth]{images/CRISP-DM_Process_Diagram.png}
+				\caption{Esquema CRISP-DM.}
+				\label{fig:EsquemaCRISPDM}
+			\end{figure}
+			
+		\end{itemize}
+		\clearpage
+		\section{Fuentes de datos}
+		
+		La fuente de datos viene a partir de dos lugares, hemos utilizado un scrapper en Perl para descargar toda la información de cada película de Filmaffinity y por otro lado hemos utilizado los datos de un proyecto opensource donde se realizaban diferentes rewiews para ver si podíamos añadir más información a las películas.
+		
+		El scrapper realiza lo siguiente:
+		
+		- Explicación del código
+		
+		- Ejemplo de cada película
+		
+	
+		La otra base de datos se ha tratado de la siguiente manera 
+		
+		- Explicación
+		
+		Este será nuestro CSV que importaremos a la base de datos orientada a grafos.
+		\clearpage
+		\section{Diseño de arquitectura SW}
+		
+		- Requerimientos
+		- Componentes
+		- Modelo y evolución
+		
+		\clearpage
+		\section{Diseño de la base datos}
+		Neo4j
+		Modelo
+		Importación de datos
+		Modelo Usuario
+		Modelo Película
+		\clearpage
+		\section{Explicación del Frontend implementado}
+		Paginas que aparecerían
+		Conexión con la database
+		\clearpage
+		\section{Explicación del Backend implementado}
+		Interacción con el frontal para actualizar la base de datos
+		\clearpage
+		\section{Demostración mediante ejemplos}
+		Ejemplo tonto de demo
+		Base de datos neo4j con varios usuarios.
+	
+\end{document}
