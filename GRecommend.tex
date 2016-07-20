@@ -29,7 +29,7 @@
 			La metodología usada para esta solución es la CRISPDM.
 			\begin{itemize}
 			\item \textit{Comprensión del negocio}: 			
-			Esta fase inicial se centra en la comprensión de los objetivos y requisitos del proyecto, en este caso el de una solución que de recomendaciones de películas. Para lograr esto recibiremos de diferentes fuentes de información como IDBM o Filmaffinity. El valor que puede tener esta solución sería la de ganar más relevancia con nuestras recomendaciones, ya que podemos ser una página de referencia a la hora de hablar sobre cine a través de unas recomendaciones dinámicas y teniendo en cuenta las acciones de los usuarios.
+			Esta fase inicial se centra en la comprensión de los objetivos y requisitos del proyecto, en este caso el de una solución que de recomendaciones de películas. Para lograr esto recibiremos como fuente de información a Filmaffinity a través de un scraper. El valor que puede tener esta solución sería la de ganar más relevancia con nuestras recomendaciones, ya que podemos ser una página de referencia a la hora de hablar sobre cine a través de unas recomendaciones dinámicas y teniendo en cuenta las acciones de los usuarios.
 			\item \textit{Comprensión de Datos}: 
 			Esta fase comienza con una colección inicial de datos y procesos con actividades con el objetivo de familiarizarse con los datos. Dentro de esta información tendremos la simbiosis de la película, actores que aparecen, director de la película o criticas y nota que se le da a la película. Por otro lado nos aparecerán también comentarios positivo o negativos que nos harán ver una sensación global sobre cada película. Además de esto tendremos diferentes etiquetas sobre cada película que nos pueden servir para buscar películas similares.
 			\item \textit{Preparación de datos}: 
@@ -47,7 +47,7 @@
 			También me he descargado una base de datos de comentarios para ver si algunas de ellas coincidían con las películas que ya tenía para tener mayor cantidad de datos posibles.
 			Además estos comentarios me dirás cosas positivas o negativas, extrayendo esta información de los textos a través de NLP (Natural Language Processing)
 			\item \textit{Modelado}: 
-			Para modelar los datos, al ir a utilizar como base de datos una no relacional, del tipo grafo, me he preparado distintos CSV desde los cuales importare toda la información estática. Tendré un esquema desde el que comenzaré a insertar los usuarios que recibirán las primeras recomendaciones basadas en los mayores scores.
+			Para modelar los datos, al ir a utilizar como base de datos una no relacional, del tipo grafo, me he preparado distintos CSV desde los cuales importare toda la información estática. Tendré un esquema desde el que comenzaré a insertar los usuarios que recibirán las primeras recomendaciones basadas en los mayores calificaciones.
 			\item \textit{Evaluación}: 
 			El modelo seguido para la solución es la siguiente. Inicialmente tenemos toda la información de películas insertada en la base de datos, esta tendrá el siguiente esquema.
 			
@@ -62,7 +62,8 @@
 			
 			Si elige nuevas películas en las que esta interesado se crearán estas nuevas relaciones y se le podrán mostrar más. Siempre se podrá volver a empezar o buscar libremente las películas para después comenzar el método de recomendación.
 			\item \textit{Despliegue}: 
-			El despliegue de la aplicación será a partir de TBD
+			Para el despliegue será necesario un Tomcat para la parte del frontend con una base de datos neo4j como backend junto con una API que conecte el frontend con el backend. 
+			Para mandar las ordenes desde el backend utilizaremos curl para generar la petición POST que es necesaria para crear/editar/borrar partes de la base de datos.
 			\begin{figure}[tbph!]
 				\centering
 				\includegraphics[width=0.7\linewidth]{images/CRISP-DM_Process_Diagram.png}
@@ -74,7 +75,7 @@
 		\clearpage
 		\section{Fuentes de datos}
 		
-		La fuente de datos viene a partir de dos lugares, hemos utilizado un scrapper en Perl para descargar toda la información de cada película de Filmaffinity y por otro lado hemos utilizado los datos de un proyecto opensource donde se realizaban diferentes rewiews para ver si podíamos añadir más información a las películas.
+		La fuente de datos viene a partir de dos lugares, hemos utilizado un scraper en Perl para descargar toda la información de cada película de Filmaffinity y por otro lado hemos utilizado los datos de un proyecto opensource donde se realizaban diferentes rewiews para ver si podíamos añadir más información a las películas.
 		
 		El scrapper realiza lo siguiente:
 		
