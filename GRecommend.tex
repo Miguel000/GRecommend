@@ -29,26 +29,26 @@
 			La metodología usada para esta solución es la CRISPDM.
 			\begin{itemize}
 			\item \textit{Comprensión del negocio}: 			
-			Esta fase inicial se centra en la comprensión de los objetivos y requisitos del proyecto, en este caso el de una solución que de recomendaciones de películas. Para lograr esto recibiremos como fuente de información a Filmaffinity a través de un scraper hecho en java. El valor que puede tener esta solución sería la de ganar más relevancia con nuestras recomendaciones, ya que podemos ser una página de referencia a la hora de hablar sobre cine a través de unas recomendaciones dinámicas y teniendo en cuenta las acciones de los usuarios.
+			Esta fase inicial se centra en la comprensión de los objetivos y requisitos del proyecto, en este caso el de una solución que de recomendaciones de películas. Para lograr esto recibiremos como fuente de información a Filmaffinity a través de un scraper hecho en Java. El valor que puede tener esta solución sería la de ganar más relevancia con nuestras recomendaciones, ya que podemos ser una página de referencia a la hora de hablar sobre cine a través de unas recomendaciones dinámicas y teniendo en cuenta las acciones de los usuarios.
 			\item \textit{Comprensión de Datos}: 
 			Esta fase comienza con una colección inicial de datos y procesos con actividades con el objetivo de familiarizarse con los datos. Dentro de esta información tendremos la simbiosis de la película, actores que aparecen, director de la película o simbiosis y nota que se le da a la película. Por otro lado nos aparecerán también comentarios positivo o negativos que nos harán ver una sensación global sobre cada película. Además de esto tendremos diferentes etiquetas sobre cada película que nos pueden servir para buscar películas similares.
 			\item \textit{Preparación de datos}: 
-			La preparación de los datos a sido a partir de un scrapper en Java. El funcionamiento es el siguiente: Busque información sobre filmaffinity y encontré un articulo donde realizaron un análisis sobre las notas recibidas, en este articulo aparecía un código en perl done descargaba las paginas de la susodicha web, yo he cogido los id de las películas para realizar de nuevo las peticiones pero esta vez he descargado toda la siguiente información por película de filmaffinity
+			La preparación de los datos a sido a partir de un scraper en Java. El funcionamiento es el siguiente: Busque información sobre filmaffinity y encontré un articulo donde realizaron un análisis sobre las notas recibidas, en este articulo aparecía un código en perl done descargaba las paginas de la susodicha web, yo he cogido los id de las películas para realizar de nuevo las peticiones pero esta vez he descargado toda la siguiente información por película de filmaffinity.\\
 			
-			\subitem Título original
-			\subitem Año
-			\subitem Duración
-			\subitem País
-			\subitem Guión
-			\subitem Música
-			\subitem Fotografía
-			\subitem Genero
-			\subitem Productora
-			\subitem Reparto
-			\subitem Director
-			\subitem Simbiosis
-			\subitem Calificación
-			\subitem Comentarios
+			\subitem - Título original
+			\subitem - Año
+			\subitem - Duración
+			\subitem - País
+			\subitem - Guión
+			\subitem - Música
+			\subitem - Fotografía
+			\subitem - Genero
+			\subitem - Productora
+			\subitem - Reparto
+			\subitem - Director
+			\subitem - Simbiosis
+			\subitem - Calificación
+			\subitem - Comentarios
 			
 			También me he descargado una base de datos de comentarios para ver si algunas de ellas coincidían con las películas que ya tenía para tener mayor cantidad de datos posibles.
 			Además, con estos comentarios,podría conseguir calificaciones positivas o negativas, extrayendo esta información de los textos a través de NLP (Natural Language Processing) y la rama del análisis del sentimiento.
@@ -73,10 +73,12 @@
 			Para el despliegue será necesario un Tomcat para la parte del frontend con una base de datos neo4j como backend junto con una API que conecte el frontend con el backend. 
 			Para mandar las ordenes desde el backend utilizaremos curl para generar la petición POST que es necesaria para crear/editar/borrar partes de la base de datos.
 			
-			La siguiente figura explica como seria toda la arquitectura de GRecommender.
+			La siguiente figura explica como seria toda la arquitectura de GRecommender.\\
+			
+			
 			\begin{figure}[tbph!]
 				\centering
-				\includegraphics[width=0.7\linewidth]{images/CRISP-DM_Process_Diagram.png}
+				\includegraphics[width=1\linewidth]{images/Arquitect_GRecommend.png}
 				\caption{Esquema CRISP-DM.}
 				\label{fig:EsquemaCRISPDM}
 			\end{figure}
@@ -85,25 +87,126 @@
 		\clearpage
 		\section{Fuentes de datos}
 		
-		La fuente de datos viene a partir de dos lugares, hemos utilizado un scraper en Java para descargar toda la información de cada película de Filmaffinity y por otro lado hemos utilizado los datos de un proyecto open-source donde se realizaban diferentes opiniones para ver si podíamos añadir más información a las películas.
+		La fuente de datos viene a partir de dos lugares, hemos utilizado un scraper en Java para descargar toda la información de cada película de Filmaffinity y por otro lado hemos utilizado los datos de un proyecto open-source donde se realizaban diferentes opiniones para ver si podíamos añadir más información a las películas.\\
 		
 		El scraper realiza lo siguiente:
 		
-		- Imagen
+		\begin{verbatim}
 		
-		- Tenemos un primer fichero con id's validos de películas de filmaffinity, como se ha comentado anteriormente.
-		- Estos id's se concatenan con la url a la que vamos a realizar la petición y lo parseamos con la librería jsoup
-		- Tratamos lo que nos devuelve extrayendo los parámetros que nos interesan y generando el csv.		
-		- Ejemplo de cada película
+		// Descarga de peliculas a a través del identificador.
+		archivo = new File ("C:\\Users\\Miguel\\GRecommend\\indices_min.txt");
+		fr = new FileReader (archivo);
+		br = new BufferedReader(fr);
+		// Fichero de salida
+		fichero = new FileWriter("C:\\Users\\Miguel\\GRecommend\\Pelis.csv");
+		pw = new PrintWriter(fichero);
 		
+		// Lectura del fichero
+		String id;
+		while((id=br.readLine())!=null){
+		
+		try {
+		doc = Jsoup.connect("http://www.filmaffinity.com/es/film"+id+".html").get();	
+		
+		// Formato csv:
+		// Titulo,año, duracion,país,Director,Guión,Música,Fotografía,Reparto
+		Element content = doc.getElementById("left-column");
+		String linea_wr = content.text();
+		linea_wr = linea_wr.replaceAll("Título original ", "");
+		linea_wr = linea_wr.replaceAll(" Año ", ";");
+		...
+		
+		\end{verbatim}
+		\begin{itemize}
+		\item Tenemos un primer fichero con id's validos de películas de filmaffinity, como se ha comentado anteriormente.
+		\item Estos id's se concatenan con la url a la que vamos a realizar la petición y lo parseamos con la librería jsoup
+		\item Tratamos lo que nos devuelve extrayendo los parámetros que nos interesan y generando el csv.		
+		\end{itemize}
+		
+		En total tenía más de 40.000 indices de películas pero para esta solución he reducido simplemente a 100 identificadores, el resultado es el mismo salvo por los tiempos de procesado e importación pero el modelo no cambia.
+		
+		La salida en CSV nos queda de la siguiente manera:
+		\begin{verbatim}
+		
+		Nachtgestalten (Nightshapes);1999;104 min.;Alemania;
+		Andreas Dresen;Andreas Dresen;Cathrin Pfeifer, Rainer Rohloff;
+		Andreas Höfer;Meriam Abbas, Dominique Horwitz, Oliver Bäbler, 
+		Susanne Bormann, Michael Gwisdek, Ricardo Valentim;
+		European Script Fund / Film Board Berlin Brandenburg
+		 / Studio Babelsberg Independents;
+		Drama;Retrata la vida de un grupo de desheredados de Berlín.
+		\end{verbatim}
+		
+		De este generamos otro para crear las relaciones entre géneros de las películas y estas.
 	
-		Una vez tenemos este CSV, para neo4j preparamos un fichero de carga que lo vaya leyendo y realizado las peticiones curl necesarias para importar cada entidad en forma de nodo, y las relaciones que existen.
+		Una vez tenemos este CSV, preparamos los diferentes CSV para importar en Neo4j. Para ello hacemos un fichero de carga que lo vaya leyendo y realizado las peticiones curl necesarias para importar cada entidad en forma de nodo, y las relaciones que existen.
+		Los comandos en cypher serían los siguientes:
 		
-		- Ejemplo código.
+		\begin{verbatim}
+		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
+		CREATE (f:FILM {name:line[0]})
+		
+		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
+		MERGE (y:YEAR {date:toInt(line[1])})
+
+		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
+		MERGE (d:DURATION {min:line[2]})
+
+		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
+		MERGE (c:COUNTRY {name:line[3]})
+		
+		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
+		MERGE (dir:DIRECTOR {name:line[4]})
+		
+		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
+		MERGE (g:GUION {name:line[5]})
+		
+		LOAD CSV FROM 'file:///Pelis_TAGS.csv' AS line FIELDTERMINATOR ';' 
+		MATCH (f:FILM {name:line[0]})
+		MERGE (t:TAG {tag:line[1]})
+		MERGE (f)<-[:TAGOFFILM]-(t)
+		
+		LOAD CSV FROM 'file:///Pelis.csv' AS line  FIELDTERMINATOR ';' 
+		MATCH (f:YEAR {date:toInt(line[1])}), (film:FILM {name:line[0]})
+		CREATE (f)-[:YEAROFFILM]->(film)
+		
+		LOAD CSV FROM 'file:///Pelis.csv' AS line  FIELDTERMINATOR ';' 
+		MATCH (d:DURATION {min:line[2]}), (film:FILM {name:line[0]})
+		CREATE (d)-[:DURATIONOFFILM]->(film)
+		
+		LOAD CSV FROM 'file:///Pelis.csv' AS line  FIELDTERMINATOR ';' 
+		MATCH (c:COUNTRY {name:line[3]}), (film:FILM {name:line[0]})
+		CREATE (c)-[:COUNTRYOFFILM]->(film)
+		
+		LOAD CSV FROM 'file:///Pelis.csv' AS line  FIELDTERMINATOR ';' 
+		MATCH (g:GUION {name:line[5]}), (film:FILM {name:line[0]})
+		CREATE (g)-[:GUIONOFFILM]->(film)
+		\end{verbatim}
+		\clearpage
+		
+		Un ejemplo de una petición curl:
+		
+		\begin{verbatim}
+		query="USING PERIODIC COMMIT 10000 LOAD CSV FROM \\\"file:\/\/\/pelis\\\" 
+		AS row FIELDTERMINATOR \\\";\\\" CREATE (f:FILM {name:line[0]});"
+		
+		payload='{"statements":[{"statement":"'"$query"'"}]}'
+		
+		curl  -X POST -H "Accept: application/json; charset=UTF-8" -H 
+		"Content-Type: application/json" -H "Authorization: Basic $CAD=" -H 
+		"Cache-Control: no-cache" -d 
+		"$payload" "http://localhost:7474/db/data/transaction/commit"
+		
+		\end{verbatim}
 		
 		Una vez realizado esto, tenemos el siguiente grafo sobre el que trabajar. Todo esta última parte viene explicado en detalle en el diseño de la base de datos.
-		
-		- Imagen grafo
+
+		\begin{figure}[tbph!]
+			\centering
+			\includegraphics[width=1\linewidth]{images/Grafo_Peliculas.png}
+			\caption{Grafo inicial.}
+			\label{fig:GrafoInicial}
+		\end{figure}
 		
 		A este será al que le añadamos los usuarios y crearemos sus relaciones como forma de crear estas recomendaciones.
 		\clearpage
@@ -116,7 +219,24 @@
 		
 		\clearpage
 		\section{Diseño de la base datos}
-		Neo4j
+		
+		En esta solución hemos implementado como base de datos una orientada a grafos, para poder aprovechar la teoría de grafos a la hora de realizar las recomendaciones.\\
+		
+		La eficacia de los grafos se basa en su gran potencia de abstracción y la muy clara representación de cualquier relación (de orden, precedencia, etc) lo que facilita enormemente tanto la fase de modelado como de resolución del problema. Gracias a la Teoría de Grafos se han desarrollado una gran variedad de algoritmos eficientes que nos permiten tomar una mejor decisión.\\	
+		
+		Una base de datos orientada a grafos (BDOG) representa la información como nodos de un grafo y sus relaciones con las aristas del mismo, de manera que se pueda usar teoría de grafos para recorrer la base de datos ya que esta puede describir atributos de los nodos (entidades) y las aristas (relaciones).\\
+		
+		Con estas nuevas bases de datos, la información se almacena de un modo diferente, se pueden combinar distintas fuentes de información de un modo sencillo, reduciendo el tamaño de la base de datos y optimizando las consultas que de otro modo serían muy costosas.
+		
+		Neo4j\cite{NeoOff} es una base de datos orientada a grafos nativa altamente escalable que aprovecha las relaciones de datos como entidades de primera clase, para ayudar a las empresas a crear aplicaciones inteligentes para satisfacer los desafíos de datos actuales en constante evolución.\\
+		
+		\begin{figure}[tbph!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{images/neo4j_notag_whitebg}
+			\caption{Neo4j.}
+			\label{fig:Neo4j}
+		\end{figure}
+
 		Modelo
 		Importación de datos
 		Modelo Usuario
