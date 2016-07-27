@@ -292,11 +292,81 @@
 		
 		\clearpage
 		\section{Explicación del Frontend implementado}
-		Paginas que aparecerían
-		Conexión con la database
+		Por falta de medios no se ha podido implementar toda la solución completa, por lo que en este apartado voy a explicar como sería la aplicación en cuestión y como la hubiera desarrollado.\\
+		
+		Toda la aplicación estaría echa en AngularJs y para la parte de visualización del grafo se implementaría con D3.js. La página de Login sería la siguiente:
+		
+		\begin{figure}[tbph!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{images/Login}
+			\caption{Página de Login.}
+			\label{fig:Login}
+		\end{figure}
+		
+		Una vez el usuario entre en la aplicación, tendremos una página inicio con las primeras recomendaciones para ese usuario basadas por la calificación. El usuario será el que diga si le gustan o no esas películas para que a través de las acciones que realice el usuario generemos nuevas recomendaciones.
+		Dentro de cada película podremos ver toda su información. 
+		\begin{figure}[tbph!]
+			\centering
+			\includegraphics[width=0.7\linewidth]{images/Pagina_Inicio}
+			\caption{Página de Inicio.}
+			\label{fig:Inicio}
+		\end{figure}
+		
+		
 		\clearpage
 		\section{Explicación del Backend implementado}
-		Interacción con el frontal para actualizar la base de datos
+		El backend implementado es la base de datos Neo4j, la versión community. Nos comunicaremos con ella a través de API realizando peticiones en Cypher.\\
+		
+		Como hemos visto anteriormente generaremos la base de datos de manera estática con las películas de filmaffinity según el modelo propuesto.\\
+		
+		Cuando se genera un nuevo usuario, se realiza a siguiente consulta en Cypher.
+		\begin{verbatim}
+		CREATE (:USER {user:"NombreUsuario",
+		hash:"HashContraseña", correo:"CorreoElectronico"})
+		\end{verbatim}
+		
+		Después, para generar las primeras recomendaciones basadas en la calificación, realizaremos la siguiente consulta
+		
+		\begin{verbatim}
+		MATCH (f:FILM) RETURN f.name as NOMBRE,
+		f.score as CALIFICACION 
+		order by  f.score desc limit 10
+		\end{verbatim}
+		
+		Esto devolverá las 10 mejores películas según Filmaffinity. Tendremos que procesar la salida para poder mostrársela al usuario pero por falta de tiempo.\\
+		
+		\begin{figure}[tbph!]
+		\centering
+		\includegraphics[width=0.9\linewidth]{images/BestFilms}
+		\caption{Mejores Películas.}
+		\label{fig:MejoresPeliculas}
+		\end{figure}
+		
+		Si el usuario realiza la acción de "Me gusta" sobre una película, se creara una relación con ella de la siguiente manera.
+		
+		\begin{verbatim}
+		MATCH (u:USER {user:"NombreUsuario"}), 
+		(f:FILM {name:"NombrePelicula"}) 
+		MERGE (u)-[:MEGUSTA {time:"timestamp"}]->(f)
+		\end{verbatim}
+		
+		Si le diera a "No me gusta" se realizaría la acción de generar un nuevo parámetro de no mostrar con ella y se dejaría de mostrar.
+		Si se le diera a "No me gusta" a una película que con anterioridad se le dio a me gusta se eliminaría esa relación.\\
+		
+		\begin{verbatim}
+		MATCH (u:USER {user:"NombreUsuario"})-[r:MEGUSTA]-> 
+		(f:FILM {name:"NombrePelicula"}) 
+		DELETE r
+		\end{verbatim}
+		
+		Cada vez que se realice la acción de "Me gusta" se realizan las diferentes consultas para seguir mostrando nuevas que estén relacionadas con sus parámetros. Un ejemplo de la consulta sería.\\
+		
+		\begin{verbatim}
+		MATCH (f:FILM {name:"NombrePelicula"})
+		with f
+		MATCH (f)<--(:YEAR)-->(f1:FILM) 
+		RETURN f1
+		\end{verbatim}
 		\clearpage
 		\section{Demostración mediante ejemplos}
 		Ejemplo tonto de demo
