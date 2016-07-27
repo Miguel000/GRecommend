@@ -63,25 +63,15 @@
 			
 			Una vez el usuario entre, vera esas recomendaciones y podrá decidir cuales le interesa, con ello editaremos esas relaciones borrando las que no le interesen y enseñándole otras con similitudes en diferentes parámetros como los que hemos visto anteriormente, por ejemplo:
 
-			\subitem Año
-			\subitem Genero
-			\subitem Actores que aparecen
-			\subitem Director
+			\subitem - Año
+			\subitem - Genero
+			\subitem - Actores que aparecen
+			\subitem - Director
 			
 			Si elige nuevas películas en las que esta interesado se crearán estas nuevas relaciones y se le podrán mostrar más. Siempre se podrá volver a empezar o buscar libremente las películas para después comenzar el método de recomendación.
 			\item \textit{Despliegue}: 
 			Para el despliegue será necesario un Tomcat para la parte del frontend con una base de datos neo4j como backend junto con una API que conecte el frontend con el backend. 
-			Para mandar las ordenes desde el backend utilizaremos curl para generar la petición POST que es necesaria para crear/editar/borrar partes de la base de datos.
-			
-			La siguiente figura explica como seria toda la arquitectura de GRecommender.\\
-			
-			
-			\begin{figure}[tbph!]
-				\centering
-				\includegraphics[width=1\linewidth]{images/Arquitect_GRecommend.png}
-				\caption{Esquema CRISP-DM.}
-				\label{fig:EsquemaCRISPDM}
-			\end{figure}
+			Para mandar las ordenes desde el backend utilizaremos curl para generar la petición POST que es necesaria para crear/editar/borrar partes de la base de datos.		
 			
 		\end{itemize}
 		\clearpage
@@ -111,6 +101,7 @@
 		// Formato csv:
 		// Titulo,año, duracion,país,Director,Guión,Música,Fotografía,Reparto
 		Element content = doc.getElementById("left-column");
+		Element rate = doc.getElementById("movie-rat-avg");
 		String linea_wr = content.text();
 		linea_wr = linea_wr.replaceAll("Título original ", "");
 		linea_wr = linea_wr.replaceAll(" Año ", ";");
@@ -140,26 +131,104 @@
 		De este generamos otro para crear las relaciones entre géneros de las películas y estas.
 	
 		Una vez tenemos este CSV, preparamos los diferentes CSV para importar en Neo4j. Para ello hacemos un fichero de carga que lo vaya leyendo y realizado las peticiones curl necesarias para importar cada entidad en forma de nodo, y las relaciones que existen.
+		Esto lo veremos en la sección de base de datos.
+		\clearpage
+		Una vez realizado esto, tenemos el siguiente grafo sobre el que trabajar. Todo esta última parte viene explicado en detalle en el diseño de la base de datos.
+
+		\begin{figure}[tbph!]
+			\centering
+			\includegraphics[width=1\linewidth]{images/Grafo_Peliculas.png}
+			\caption{Grafo inicial.}
+			\label{fig:GrafoInicial}
+		\end{figure}
+		
+		A este será al que le añadamos los usuarios y crearemos sus relaciones como forma de crear estas recomendaciones.
+		\clearpage
+		\section{Diseño de arquitectura SW}
+		
+		La arquitectura estará basada en sistemas distribuidos, donde tendremos un cliente servidor. En el servidor recibiremos las peticiones de usuarios para conectarse y en el cliente podremos realizar las modificaciones en las recomendaciones que se nos entreguen.\\
+		
+		El servidor tendrá instalado la instancia de Neo4j donde almacenaremos los datos, y un Tomcat para el frontal web. Los usuarios realizarán la conexión a este frontal y será necesario un login para acceder. 
+		Este frontal estará basado en D3 para la visualización junto a Angularjs.\\
+		
+		En la siguiente imagen se explica como sería el esquema.
+		
+		\begin{figure}[tbph!]
+			\centering
+			\includegraphics[width=1\linewidth]{images/Arq_clientserver.png}
+			\caption{Arquitectura Cliente Servidor.}
+			\label{fig:Arq-client-serv}
+		\end{figure}
+		\clearpage
+		Para la comunicación entre el Tomcat y Neo4j usaremos la biblioteca Neo4j - OGM de Java pura que puede persistir en objetos de dominio utilizando Neo4j. Utiliza declaraciones Cypher para manejar esas operaciones en Neo4j.
+		
+		El MDS es compatible con el control de cambios para reducir al mínimo las actualizaciones necesarias y persistencia transitiva (lectura y actualización de los barrios de un objeto).
+		
+		La conexión con Neo4j manejado por una capa de conductor, que puede utilizar el protocolo binario , HTTP o API integradas de Neo4j.\\
+		La siguiente figura explica como seria toda la arquitectura de GRecommender.\\
+		
+		
+		\begin{figure}[tbph!]
+			\centering
+			\includegraphics[width=1\linewidth]{images/Arquitect_GRecommend.png}
+			\caption{Esquema CRISP-DM.}
+			\label{fig:EsquemaCRISPDM}
+		\end{figure}
+		\clearpage
+		\section{Diseño de la base datos}
+		
+		En esta solución hemos implementado como base de datos una orientada a grafos, para poder aprovechar la teoría de grafos a la hora de realizar las recomendaciones.\\
+		
+		La eficacia de los grafos se basa en su gran potencia de abstracción y la muy clara representación de cualquier relación (de orden, precedencia, etc) lo que facilita enormemente tanto la fase de modelado como de resolución del problema. Gracias a la Teoría de Grafos se han desarrollado una gran variedad de algoritmos eficientes que nos permiten tomar una mejor decisión.\\	
+		
+		Una base de datos orientada a grafos (BDOG) representa la información como nodos de un grafo y sus relaciones con las aristas del mismo, de manera que se pueda usar teoría de grafos para recorrer la base de datos ya que esta puede describir atributos de los nodos (entidades) y las aristas (relaciones).\\
+		
+		Con estas nuevas bases de datos, la información se almacena de un modo diferente, se pueden combinar distintas fuentes de información de un modo sencillo, reduciendo el tamaño de la base de datos y optimizando las consultas que de otro modo serían muy costosas.
+		
+		Neo4j es una base de datos orientada a grafos nativa altamente escalable que aprovecha las relaciones de datos como entidades de primera clase, para ayudar a las empresas a crear aplicaciones inteligentes para satisfacer los desafíos de datos actuales en constante evolución.\\
+		
+		\begin{figure}[tbph!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{images/neo4j_notag_whitebg}
+			\caption{Neo4j.}
+			\label{fig:Neo4j}
+		\end{figure}
+		\clearpage
+		
+		Para importar los datos utilizaremos el método que nos proporciona la propia base de datos Neo4j, a través de LOAD CSV podemos cargar un csv externo y crear nuestros nodos y relaciones que deseemos por cada elemento de la fila.\\
+		
+		El lenguaje que utiliza Neo4j para las consultas e importación de los datos es Cypher.
+		Cypher es un lenguaje declarativo , SQL - inspirado para describir los patrones en los grafos visualmente utilizando una sintaxis ASCII-art.\\
+		
+		Esto nos permite afirmar lo que queremos seleccionar, insertar, actualizar o eliminar de nuestros datos del gráfico sin necesidad de nosotros para describir exactamente cómo hacerlo.
+		
+		\begin{figure}[tbph!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{images/cypher}
+			\caption{Cypher.}
+			\label{fig:Cypher}
+		\end{figure}
+		
 		Los comandos en cypher serían los siguientes:
 		
 		\begin{verbatim}
 		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
-		CREATE (f:FILM {name:line[0]})
+		CREATE (f:FILM {name:line[1], score:line[0]})
 		
 		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
-		MERGE (y:YEAR {date:toInt(line[1])})
-
-		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
-		MERGE (d:DURATION {min:line[2]})
-
-		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
-		MERGE (c:COUNTRY {name:line[3]})
+		MERGE (y:YEAR {date:toInt(line[2])})
 		
 		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
-		MERGE (dir:DIRECTOR {name:line[4]})
+		MERGE (d:DURATION {min:line[3]})
 		
 		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
-		MERGE (g:GUION {name:line[5]})
+		MERGE (c:COUNTRY {name:line[4]})
+		
+		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
+		MERGE (dir:DIRECTOR {name:line[5]})
+		
+		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
+		MERGE (g:GUION {name:line[6]})
 		
 		LOAD CSV FROM 'file:///Pelis_TAGS.csv' AS line FIELDTERMINATOR ';' 
 		MATCH (f:FILM {name:line[0]})
@@ -167,22 +236,26 @@
 		MERGE (f)<-[:TAGOFFILM]-(t)
 		
 		LOAD CSV FROM 'file:///Pelis.csv' AS line  FIELDTERMINATOR ';' 
-		MATCH (f:YEAR {date:toInt(line[1])}), (film:FILM {name:line[0]})
+		MATCH (f:YEAR {date:toInt(line[2])}), (film:FILM {name:line[1]})
 		CREATE (f)-[:YEAROFFILM]->(film)
 		
 		LOAD CSV FROM 'file:///Pelis.csv' AS line  FIELDTERMINATOR ';' 
-		MATCH (d:DURATION {min:line[2]}), (film:FILM {name:line[0]})
+		MATCH (d:DURATION {min:line[3]}), (film:FILM {name:line[1]})
 		CREATE (d)-[:DURATIONOFFILM]->(film)
 		
 		LOAD CSV FROM 'file:///Pelis.csv' AS line  FIELDTERMINATOR ';' 
-		MATCH (c:COUNTRY {name:line[3]}), (film:FILM {name:line[0]})
+		MATCH (c:COUNTRY {name:line[4]}), (film:FILM {name:line[1]})
 		CREATE (c)-[:COUNTRYOFFILM]->(film)
 		
 		LOAD CSV FROM 'file:///Pelis.csv' AS line  FIELDTERMINATOR ';' 
-		MATCH (g:GUION {name:line[5]}), (film:FILM {name:line[0]})
+		MATCH (dir:DIRECTOR {name:line[5]}), (film:FILM {name:line[1]})
+		CREATE (dir)-[:DIRECTOROFFILM]->(film)
+		
+		LOAD CSV FROM 'file:///Pelis.csv' AS line  FIELDTERMINATOR ';' 
+		MATCH (g:GUION {name:line[6]}), (film:FILM {name:line[1]})
 		CREATE (g)-[:GUIONOFFILM]->(film)
 		\end{verbatim}
-		\clearpage
+		
 		
 		Un ejemplo de una petición curl:
 		
@@ -198,49 +271,25 @@
 		"$payload" "http://localhost:7474/db/data/transaction/commit"
 		
 		\end{verbatim}
+		\clearpage
+		El Modelo sigue la forma de una estrella, de una película se relacionan todas sus características, en la siguiente figura se puede ver como queda de manera esquemática.
 		
-		Una vez realizado esto, tenemos el siguiente grafo sobre el que trabajar. Todo esta última parte viene explicado en detalle en el diseño de la base de datos.
-
 		\begin{figure}[tbph!]
-			\centering
-			\includegraphics[width=1\linewidth]{images/Grafo_Peliculas.png}
-			\caption{Grafo inicial.}
-			\label{fig:GrafoInicial}
+		 	\centering
+		 	\includegraphics[width=0.5\linewidth]{images/Modelo}
+		 	\caption{Modelo de película.}
+		 	\label{fig:ModeloPelicula}
 		\end{figure}
-		
-		A este será al que le añadamos los usuarios y crearemos sus relaciones como forma de crear estas recomendaciones.
-		\clearpage
-		\section{Diseño de arquitectura SW}
-		
-		- Requerimientos
-		- Instalar tomcat, neo4j, jsoup, curl.
-		- Componentes, Nuestro frontal en el tomcat y nuestra base de datos en neo4j.
-		- Modelo y evolución
-		
-		\clearpage
-		\section{Diseño de la base datos}
-		
-		En esta solución hemos implementado como base de datos una orientada a grafos, para poder aprovechar la teoría de grafos a la hora de realizar las recomendaciones.\\
-		
-		La eficacia de los grafos se basa en su gran potencia de abstracción y la muy clara representación de cualquier relación (de orden, precedencia, etc) lo que facilita enormemente tanto la fase de modelado como de resolución del problema. Gracias a la Teoría de Grafos se han desarrollado una gran variedad de algoritmos eficientes que nos permiten tomar una mejor decisión.\\	
-		
-		Una base de datos orientada a grafos (BDOG) representa la información como nodos de un grafo y sus relaciones con las aristas del mismo, de manera que se pueda usar teoría de grafos para recorrer la base de datos ya que esta puede describir atributos de los nodos (entidades) y las aristas (relaciones).\\
-		
-		Con estas nuevas bases de datos, la información se almacena de un modo diferente, se pueden combinar distintas fuentes de información de un modo sencillo, reduciendo el tamaño de la base de datos y optimizando las consultas que de otro modo serían muy costosas.
-		
-		Neo4j\cite{NeoOff} es una base de datos orientada a grafos nativa altamente escalable que aprovecha las relaciones de datos como entidades de primera clase, para ayudar a las empresas a crear aplicaciones inteligentes para satisfacer los desafíos de datos actuales en constante evolución.\\
+		El modelo va adaptándose cuando aparecen los usuarios, generando una nueva entidad por usuario y relacionado siempre por las películas en las cuáles tengan un mayor calificación, dependiendo de sus otros parámetros como año, director, etc.
+		El modelo queda de la siguiente manera. Dentro del nodo usuario tendríamos la información de la cuenta como el correo electrónico o el hash de la contraseña.
 		
 		\begin{figure}[tbph!]
 			\centering
-			\includegraphics[width=0.5\linewidth]{images/neo4j_notag_whitebg}
-			\caption{Neo4j.}
-			\label{fig:Neo4j}
+			\includegraphics[width=0.5\linewidth]{images/Modelo_con_usuario}
+			\caption{Modelo de película.}
+			\label{fig:ModeloPelicula}
 		\end{figure}
-
-		Modelo
-		Importación de datos
-		Modelo Usuario
-		Modelo Película
+		
 		\clearpage
 		\section{Explicación del Frontend implementado}
 		Paginas que aparecerían
