@@ -1,0 +1,11 @@
+GRecommend.pdf es el fichero con la memoria del proyecto.
+Carpeta /data contiene los datos que he utilizado para la base de datos
+	/data/peliculas.csv contiene toda la información descargada por el scraper.
+	/data/peliculas_TAGS.csv contiene dos parametros, la pelicula y el tag, para a la hora de importar los datos con relaciones.
+	/data/indices.txt contiene los id's de filmaffinity.
+
+carpeta /graph tiene el grafo creado.
+
+carpeta /java contiene los codigos usados para obtener y procesar los datos.
+	/java/scraper.java
+

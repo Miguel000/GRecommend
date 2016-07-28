@@ -14,7 +14,7 @@
 			
 			En la siguiente memoria voy a explicar como he desarrollado mi sistema de recomendaciones de películas, que datos he utilizado y como he ido eligiendo todas las partes de mi solución.\\
 			
-			El nombre que le he dado a mi solución es GRecommender. Éste se basa en un sistema de recomendaciones con una base de datos orientada a grafos que da soporte a todo el sistema. El frontal interactúa con la base de datos modificando ésta creando nuevos vértices al insertar un nuevo usuario y aristas en el caso de las recomendaciones. \\
+			El nombre que le he dado a mi solución es GRecommender. Éste se basa en un sistema de recomendaciones con una base de datos orientada a grafos que da soporte a todo el sistema. El frontal se comunica con la base de datos modificando ésta creando nuevos vértices al insertar un nuevo usuario y aristas en el caso de las recomendaciones. \\
 			
 			En las siguientes paginas se describirá todo el proceso que se ha seguido hasta lograr la solución.\\
 			
@@ -33,7 +33,7 @@
 			\item \textit{Comprensión de Datos}: 
 			Esta fase comienza con una colección inicial de datos y procesos con actividades con el objetivo de familiarizarse con los datos. Dentro de esta información tendremos la simbiosis de la película, actores que aparecen, director de la película o simbiosis y nota que se le da a la película. Por otro lado nos aparecerán también comentarios positivo o negativos que nos harán ver una sensación global sobre cada película. Además de esto tendremos diferentes etiquetas sobre cada película que nos pueden servir para buscar películas similares.
 			\item \textit{Preparación de datos}: 
-			La preparación de los datos a sido a partir de un scraper en Java. El funcionamiento es el siguiente: Busque información sobre filmaffinity y encontré un articulo donde realizaron un análisis sobre las notas recibidas, en este articulo aparecía un código en perl done descargaba las paginas de la susodicha web, yo he cogido los id de las películas para realizar de nuevo las peticiones pero esta vez he descargado toda la siguiente información por película de filmaffinity.\\
+			La preparación de los datos a sido a partir de un scraper en Java. El funcionamiento es el siguiente: Busque información sobre filmaffinity y como descargarse la información de cada una de estas películas. Encontré varios sitios pero me decante por hacerlo a mano, ya que a partir de el end-point solo tenia que añadir un numero de identificación, yo he cogido los id aleatorios y los he guardado en un archivo siempre que devolviera el código de respuesta 200. Con estos id's de las películas realicé de nuevo las peticiones pero esta vez he descargado toda la siguiente información por película de filmaffinity.\\
 			
 			\subitem - Título original
 			\subitem - Año
@@ -209,7 +209,7 @@
 			\label{fig:Cypher}
 		\end{figure}
 		
-		Los comandos en cypher serían los siguientes:
+		Los comandos en Cypher serían los siguientes:
 		
 		\begin{verbatim}
 		LOAD CSV FROM 'file:///Pelis.csv' AS line FIELDTERMINATOR ';' 
@@ -369,7 +369,8 @@
 		\end{verbatim}
 		\clearpage
 		\section{Demostración mediante ejemplos}
-		Ejemplo tonto de demo
-		Base de datos neo4j con varios usuarios.
+		Esto sería una simulación de la aplicacación, es totalmente teórica ya que por falta de tiempo no he podido completar toda la aplicación, sobretodo la parte de visualización.
+		
+		Un usuario quiere conectarse 
 	
 \end{document}
